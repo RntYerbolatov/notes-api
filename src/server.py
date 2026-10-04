@@ -1,7 +1,7 @@
 import os
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-NOTES = ["alpha", "beta", "gamma"]
+NOTES = ["alpha", "beta", "gamma", "delta"]
 
 
 class Handler(BaseHTTPRequestHandler):
