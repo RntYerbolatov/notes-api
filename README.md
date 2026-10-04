@@ -1,0 +1,39 @@
+# Notes API
+
+A small HTTP service written in Python.
+
+## What it does
+
+The service provides three GET endpoints:
+
+- `/` - returns a greeting
+- `/healthz` - health check
+- `/notes` - returns the number of notes
+
+The service uses a hard-coded list of notes and does not require a database.
+
+## How to run
+
+Run the service with:
+
+```bash
+./scripts/run.sh
+
+The default port is 8080.
+
+You can choose another port with the PORT environment variable:
+
+PORT=9000 ./scripts/run.sh
+
+How to test
+
+Run:
+
+./scripts/test.sh
+
+The script runs three automated tests and prints:
+
+TESTS: 3/3
+Port
+
+The service uses the PORT environment variable and defaults to port 8080.
