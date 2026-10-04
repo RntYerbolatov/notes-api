@@ -47,7 +47,7 @@ Run:
 
 The script runs three automated tests and prints:
 
-TESTS: 3/3
+TESTS: n/n
 Port
 
 The service uses the PORT environment variable and defaults to port 8080.
