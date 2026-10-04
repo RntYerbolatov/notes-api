@@ -51,3 +51,10 @@ TESTS: n/n
 Port
 
 The service uses the PORT environment variable and defaults to port 8080.
+
+## Example requests
+
+```bash
+curl http://localhost:8080/
+curl http://localhost:8080/healthz
+curl http://localhost:8080/notes
