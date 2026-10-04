@@ -39,7 +39,7 @@ You can choose another port with the PORT environment variable:
 
 PORT=9000 ./scripts/run.sh
 
-How to test
+##How to test
 
 Run:
 
