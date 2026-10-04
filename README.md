@@ -12,6 +12,13 @@ The service provides three GET endpoints:
 
 The service uses a hard-coded list of notes and does not require a database.
 
+## Example
+
+```text
+GET /healthz
+200 OK
+ok
+
 ## How to run
 
 Run the service with:
