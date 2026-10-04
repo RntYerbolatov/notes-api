@@ -48,6 +48,8 @@ class TestService(unittest.TestCase):
     def test_notes_counts_three(self):
         self.assertEqual(self.get("/notes")[1], "4")
 
+    def test_unknown_path_returns_404(self):
+        self.assertEqual(self.get("/unknown")[0], 404)
 
 if __name__ == "__main__":
     unittest.main()
