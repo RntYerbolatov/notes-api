@@ -19,6 +19,13 @@ GET /healthz
 200 OK
 ok
 
+## API examples
+
+```bash
+curl http://localhost:8080/
+curl http://localhost:8080/healthz
+curl http://localhost:8080/notes
+
 ## How to run
 
 Run the service with:
