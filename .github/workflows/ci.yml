@@ -82,7 +82,7 @@ jobs:
           curl -fsS http://localhost:9123/notes | grep -qx '4'
 
       - name: Scan image for critical vulnerabilities
-        uses: aquasecurity/trivy-action@0.36.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: ghcr.io/${{ github.repository }}:${{ github.sha }}
           format: table
