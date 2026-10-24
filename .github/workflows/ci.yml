@@ -14,7 +14,7 @@ defaults:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   test:
@@ -30,3 +30,78 @@ jobs:
           python-version: "3.12"
 
       - run: ./scripts/test.sh
+
+  publish:
+    name: Build, scan and publish Docker image
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set image name
+        id: image
+        run: |
+          echo "name=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+
+      - name: Build Docker image
+        env:
+          IMAGE: ${{ steps.image.outputs.name }}
+        run: |
+          docker build -t "$IMAGE:$GITHUB_SHA" .
+
+      - name: Smoke test
+        env:
+          IMAGE: ${{ steps.image.outputs.name }}
+        run: |
+          docker run -d --rm \
+            --name notes-test \
+            -e PORT=9123 \
+            -p 9123:9123 \
+            "$IMAGE:$GITHUB_SHA"
+
+          trap 'docker stop notes-test >/dev/null 2>&1 || true' EXIT
+
+          for attempt in {1..20}; do
+            if curl -fsS http://localhost:9123/healthz -o /tmp/healthz; then
+              break
+            fi
+            sleep 1
+          done
+
+          grep -qx 'ok' /tmp/healthz
+          curl -fsS http://localhost:9123/ | grep -qx 'notes service'
+          curl -fsS http://localhost:9123/notes | grep -qx '4'
+
+      - name: Scan image for critical vulnerabilities
+        uses: aquasecurity/trivy-action@0.36.0
+        with:
+          image-ref: ghcr.io/${{ github.repository }}:${{ github.sha }}
+          format: table
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: os,library
+          severity: CRITICAL
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish Docker image
+        env:
+          IMAGE: ${{ steps.image.outputs.name }}
+        run: |
+          docker tag "$IMAGE:$GITHUB_SHA" "$IMAGE:latest"
+          docker push "$IMAGE:$GITHUB_SHA"
+          docker push "$IMAGE:latest"
