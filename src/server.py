@@ -4,7 +4,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 NOTES = ["alpha", "beta", "gamma", "delta"]
 
 # Settings from Kubernetes ConfigMap and Secret
-GREETING = os.environ.get("GREETING", "Hello")
+GREETING = os.environ.get("GREETING", "")
 API_KEY = os.environ.get("API_KEY", "")
 
 
@@ -14,7 +14,7 @@ class Handler(BaseHTTPRequestHandler):
             self._send(200, b"ok")
 
         elif self.path == "/":
-            message = f"{GREETING} - notes service"
+            message = f"{GREETING} - notes service" if GREETING else "notes service"
             self._send(200, message.encode())
 
         elif self.path == "/notes":
