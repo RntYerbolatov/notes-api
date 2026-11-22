@@ -58,3 +58,11 @@ The service uses the PORT environment variable and defaults to port 8080.
 curl http://localhost:8080/
 curl http://localhost:8080/healthz
 curl http://localhost:8080/notes
+
+## Rollback
+
+To roll back a bad deployment, use git revert <commit-sha> to revert the commit that introduced the problem.
+
+Push the revert commit to the main branch. Argo CD will automatically detect the change in Git and synchronize the previous working configuration with the Kubernetes cluster.
+
+This keeps Git as the source of truth and provides a clear history of deployment changes.
